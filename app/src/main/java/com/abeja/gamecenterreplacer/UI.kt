@@ -87,7 +87,7 @@ fun MainUI(modifier: Modifier = Modifier, viewModel: ViewModel) {
             /**
              * Main UI
              */
-            StandardText("Turn on the switch below and we'll open the app you want instead of the Game Center.")
+            StandardText("Turn on the switch below to automatically launch your chosen app whenever you activate the competitive key.")
             StandardSwitch(
                 "Replace Game Space",
                 mainSwitchStatus.value,
@@ -98,9 +98,9 @@ fun MainUI(modifier: Modifier = Modifier, viewModel: ViewModel) {
             }
 
             StandardText(
-                "Choosen app: $appTargetName",
+                "Chosen app: $appTargetName",
             )
-            StandardButton("Choose a different app ", Icons.AutoMirrored.Filled.List) {
+            StandardButton("Choose a different app", Icons.AutoMirrored.Filled.List) {
                 showAppsDialog.value = true
             }
         }
