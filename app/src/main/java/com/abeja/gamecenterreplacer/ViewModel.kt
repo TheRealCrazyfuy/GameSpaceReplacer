@@ -44,7 +44,7 @@ class ViewModel : ViewModel() {
     }
 
     fun setApptarget(packageName: String, appName: String, context: Context) {
-        if (serviceData.appTargetPackage != packageName) { // only restart the service if the app is different
+        if (serviceData.appTargetPackage != packageName && checkifServiceisRunning(context, BackgroundService::class.java)) { // only restart the service if the app is different
             stopService(context)
             startService(context)
         }
