@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -19,11 +20,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.abeja.gamecenterreplacer.ui.theme.GamecenterreplacerTheme
 
 class MainActivity : ComponentActivity() {
+    private val viewModel: ViewModel by viewModels()
+
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        val viewModel = ViewModel()
         viewModel.onLaunch(this)
         setContent {
             GamecenterreplacerTheme {
@@ -44,6 +46,11 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.onLaunch(this)
     }
 }
 

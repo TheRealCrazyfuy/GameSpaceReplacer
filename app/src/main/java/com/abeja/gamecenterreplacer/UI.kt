@@ -25,6 +25,8 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -50,6 +52,13 @@ fun MainUI(modifier: Modifier = Modifier, viewModel: ViewModel) {
     }
     val showAppsDialog = remember { mutableStateOf(false) }
 
+    // TODO: Figure a better way to update the UI
+    val isUsageStatsPermissionGranted by viewModel.isUsageStatsPermissionGranted.observeAsState(false)
+    val isOnTopPermissionGranted by viewModel.isOnTopPermissionGranted.observeAsState(false)
+    val appHasBeenChoosed by viewModel.appHasBeenChoosed.observeAsState(false)
+    val appTargetName by viewModel.appTargetName.observeAsState("")
+
+
     LazyColumn(modifier = modifier
         .padding(top = 56.dp)
         .fillMaxWidth()) {
@@ -58,14 +67,14 @@ fun MainUI(modifier: Modifier = Modifier, viewModel: ViewModel) {
             /**
              * Permissions check
              */
-            if (!viewModel.isUsageStatsPermissionGranted(context)) {
+            if (!isUsageStatsPermissionGranted) {
                 StandardText("Usage access is required")
                 StandardButton(
                     "Allow usage access",
                     Icons.Default.Warning
                 ) { viewModel.requestUsageStatsPermission(context) }
             }
-            if (!viewModel.isOnTopPermissionGranted(context)) {
+            if (!isOnTopPermissionGranted) {
                 StandardText("On top permission is required")
                 StandardButton(
                     "Allow on top permission",
@@ -82,22 +91,14 @@ fun MainUI(modifier: Modifier = Modifier, viewModel: ViewModel) {
             StandardSwitch(
                 "Replace Game Space",
                 mainSwitchStatus.value,
-                enabled = viewModel.isUsageStatsPermissionGranted(context) && viewModel.isOnTopPermissionGranted(
-                    context
-                ) && serviceData.appTargetPackage != null
+                enabled = isUsageStatsPermissionGranted && isOnTopPermissionGranted && appHasBeenChoosed
             ) {
                 mainSwitchStatus.value = it
                 viewModel.setServiceStatus(context, mainSwitchStatus.value)
             }
 
             StandardText(
-                "Choosen app: ${
-                    if (viewModel.getServiceData().appTargetName != null) {
-                        viewModel.getServiceData().appTargetName
-                    } else {
-                        "None"
-                    }
-                }"
+                "Choosen app: $appTargetName",
             )
             StandardButton("Choose a different app ", Icons.AutoMirrored.Filled.List) {
                 showAppsDialog.value = true
