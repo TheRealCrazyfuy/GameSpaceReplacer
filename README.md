@@ -2,7 +2,14 @@
 
 <div align="center">
 <img align=center src="https://github.com/user-attachments/assets/96eb8e68-9bfc-49a2-ade4-bc6281e331c0" width="400">
-
+</div>
+<div align="center">
+  <img src="https://img.shields.io/github/v/release/TheRealCrazyfuy/GameSpaceReplacer?&style=flat-square&color=5b5ef7&display_name=release">
+  <img src="https://img.shields.io/badge/kotlin-5b5ef7.svg?logo=kotlin&logoColor=white&style=flat-square">
+  <img src="https://img.shields.io/badge/Android_Studio-5b5ef7?logo=android-studio&logoColor=white&style=flat-square">
+</div>
+  </div>
+<div align="center">
   Take control of the red switch on your REDMAGIC Android device!
 </div>
 
