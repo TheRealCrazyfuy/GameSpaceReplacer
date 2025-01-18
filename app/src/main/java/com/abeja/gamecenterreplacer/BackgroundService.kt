@@ -17,21 +17,22 @@ import kotlinx.coroutines.flow.flow
 
 class BackgroundService : Service() {
     private val targetAppPackage = serviceData.appTargetPackage
+    private val targetAppName = serviceData.appTargetName
     private val triggerAppPackage = "cn.nubia.gamelauncher"
     private val serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         //requestUsageStatsPermission()
 
-        val channelId = "LightServiceChannel"
+        val channelId = "GameCenterReplacer"
         val channelName = "Background Service"
         val notificationChannel = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_DEFAULT)
         val notificationManager = getSystemService(NotificationManager::class.java)
         notificationManager.createNotificationChannel(notificationChannel)
 
         val notification = NotificationCompat.Builder(this, channelId)
-            .setContentTitle("Background Service is Running")
-            .setContentText("Long press this notification to hide.")
+            .setContentTitle("Red switch to: $targetAppName")
+            //.setContentText("Long press this notification to hide.")
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .build()
 
@@ -72,7 +73,7 @@ class BackgroundService : Service() {
                 startOrResumeTargetApp()
             }
 
-            delay(1000)
+            delay(1000) // TODO: get rid of this delay while not tanking the battery life //
         }
     }
 
@@ -80,7 +81,7 @@ class BackgroundService : Service() {
         val needKillGameLauncher = Settings.Global.getInt(contentResolver, "gcs_need_kill_game_launcher", 0)
         if (needKillGameLauncher == 0) { // check if the competitive key is on too
             Log.d("BackgroundService", "Attempting to start target app: $targetAppPackage")
-            val launchIntent = packageManager.getLaunchIntentForPackage(targetAppPackage)
+            val launchIntent = targetAppPackage?.let { packageManager.getLaunchIntentForPackage(it) }
             if (launchIntent != null) {
                 launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 Log.d("BackgroundService", "Launching target app: $targetAppPackage")

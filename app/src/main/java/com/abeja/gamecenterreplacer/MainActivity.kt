@@ -24,6 +24,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         val viewModel = ViewModel()
+        viewModel.onLaunch(this)
         setContent {
             GamecenterreplacerTheme {
                 Scaffold(modifier = Modifier.fillMaxSize(),
