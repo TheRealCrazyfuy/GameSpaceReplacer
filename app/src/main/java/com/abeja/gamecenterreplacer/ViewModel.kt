@@ -44,6 +44,10 @@ class ViewModel : ViewModel() {
     }
 
     fun setApptarget(packageName: String, appName: String, context: Context) {
+        if (serviceData.appTargetPackage != packageName) { // only restart the service if the app is different
+            stopService(context)
+            startService(context)
+        }
         serviceData.appTargetPackage = packageName
         serviceData.appTargetName = appName
         _appHasBeenChoosed.value = getApptargetPackage() != null
@@ -51,10 +55,6 @@ class ViewModel : ViewModel() {
         // Save preferences
         savePreferences(context, "appTargetPackage", packageName)
         savePreferences(context, "appTargetName", appName)
-        if (checkifServiceisRunning(context, BackgroundService::class.java)) { // we restart the service if it is running
-            stopService(context)
-            startService(context)
-        }
     }
 
     fun getApptargetPackage(): String? {
@@ -88,12 +88,13 @@ class ViewModel : ViewModel() {
     }
 
     fun setServiceStatus(context: Context, serviceStatus: Boolean) {
-        Log.d("ViewModel", "Service status: $serviceStatus")
-        serviceData.serviceStatus = serviceStatus
-        if (serviceStatus) {
-            startService(context)
-        } else {
-            stopService(context)
+        if (serviceData.serviceStatus != serviceStatus) {
+            serviceData.serviceStatus = serviceStatus
+            if (serviceStatus) {
+                startService(context)
+            } else {
+                stopService(context)
+            }
         }
     }
 

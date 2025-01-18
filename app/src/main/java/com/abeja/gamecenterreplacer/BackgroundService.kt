@@ -31,7 +31,7 @@ class BackgroundService : Service() {
         notificationManager.createNotificationChannel(notificationChannel)
 
         val notification = NotificationCompat.Builder(this, channelId)
-            .setContentTitle("Red switch to: $targetAppName")
+            .setContentTitle("Red switch set to: $targetAppName")
             //.setContentText("Long press this notification to hide.")
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .build()
