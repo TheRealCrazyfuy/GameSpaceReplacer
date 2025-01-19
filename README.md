@@ -27,7 +27,7 @@ With this app, you can replace the default behavior of the red switch to launch 
 
 ## Requirements
 
-- Any Global modern REDMAGIC device running REDMAGIC OS
+- Any Global modern REDMAGIC device running REDMAGIC OS.
 - Necessary permissions:
   - Usage Stats Permission > Check if the Game Space has been launched.
   - Display over other apps permission > Launch a different app on top of the Game Space.
@@ -43,9 +43,9 @@ The app has been tested on the following devices:
 It should work on any modern REDMAGIC device. If you encounter any issues, please feel free to open an issue on GitHub. **Note that the Chinese firmware isn't officially supported.**
 
 ## Common Issues
-- **REDMAGIC 10 Devices must have set the switch to launch the Game Space**
+- **REDMAGIC 10 Devices must have set the switch to launch the Game Space.**
 - The REDMAGIC Game Space briefly appears before the selected app launches.
-- When Installing the apk Play Protect will complain about the app made for an older Android version, you have to press on `Learn more` and `Install anyways`
+- When Installing the apk Play Protect will complain about the app made for an older Android version, you have to press on `Learn more` and `Install anyways`.
 
 ## Installation
 - Go to the [Releases page](https://github.com/TheRealCrazyfuy/GameSpaceReplacer/releases) and download the latest release.
