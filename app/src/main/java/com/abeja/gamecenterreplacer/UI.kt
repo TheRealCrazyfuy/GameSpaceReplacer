@@ -149,7 +149,8 @@ fun StandardSwitch(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 12.dp),
+            .padding(horizontal = 16.dp, vertical = 12.dp)
+            .clickable(enabled) { onCheckedChange(!checked) },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
