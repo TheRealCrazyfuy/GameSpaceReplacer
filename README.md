@@ -4,7 +4,7 @@
 <img align=center src="img/app_icon_transparent.png" width="400">
 </div>
 <div align="center">
-  <img src="https://img.shields.io/github/v/release/TheRealCrazyfuy/GameSpaceReplacer?&style=flat-square&color=5b5ef7&display_name=release">
+  <img src="https://img.shields.io/github/v/release/TheRealCrazyfuy/GameSpaceReplacer">
   <img src="https://img.shields.io/badge/kotlin-5b5ef7.svg?logo=kotlin&logoColor=white&style=flat-square">
   <img src="https://img.shields.io/badge/Android_Studio-5b5ef7?logo=android-studio&logoColor=white&style=flat-square">
 </div>
