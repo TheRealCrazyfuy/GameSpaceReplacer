@@ -1,7 +1,7 @@
 # Game Space Replacer
 
 <div align="center">
-<img align=center src="https://github.com/user-attachments/assets/96eb8e68-9bfc-49a2-ade4-bc6281e331c0" width="400">
+<img align=center src="img/app_icon_transparent.png" width="400">
 </div>
 <div align="center">
   <img src="https://img.shields.io/github/v/release/TheRealCrazyfuy/GameSpaceReplacer?&style=flat-square&color=5b5ef7&display_name=release">
