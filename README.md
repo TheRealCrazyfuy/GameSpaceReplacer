@@ -55,6 +55,10 @@ It should work on any modern REDMAGIC device. If you encounter any issues, pleas
 ## Contributions
 All contributions are welcome, open a pull request and we'll look into it, thanks.
 
+## Screenshots
+<img src="img/screenshot_01.jpg" width="200">
+<img src="img/screenshot_02.jpg" width="200">
+
 ## Community
 Join our Discord community to connect directly with the project, share your feedback, and get the latest updates. Whether you need support or want to contribute, we’d love to have you with us!
 
