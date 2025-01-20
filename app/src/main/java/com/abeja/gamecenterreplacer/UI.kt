@@ -2,6 +2,9 @@ package com.abeja.gamecenterreplacer
 
 import android.content.Context
 import android.content.pm.ResolveInfo
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -38,6 +41,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
+import android.Manifest
+import android.util.Log
 
 @Composable
 fun MainUI(modifier: Modifier = Modifier, viewModel: ViewModel) {
@@ -55,9 +60,22 @@ fun MainUI(modifier: Modifier = Modifier, viewModel: ViewModel) {
     // TODO: Figure a better way to update the UI
     val isUsageStatsPermissionGranted by viewModel.isUsageStatsPermissionGranted.observeAsState(false)
     val isOnTopPermissionGranted by viewModel.isOnTopPermissionGranted.observeAsState(false)
+    val isNotificationPermissionGranted by viewModel.isNotificationPermissionGranted.observeAsState(false)
     val appHasBeenChoosed by viewModel.appHasBeenChoosed.observeAsState(false)
     val appTargetName by viewModel.appTargetName.observeAsState("")
 
+    val requestNotificationLauncher: ActivityResultLauncher<String> = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            // Permission granted
+            Log.d("MainUI", "Notification permission granted")
+        } else {
+            // Permission denied
+            Log.d("MainUI", "Notification permission denied")
+            viewModel.openNotificationPermissionSettings(context)
+        }
+    }
 
     LazyColumn(modifier = modifier
         .padding(top = 56.dp)
@@ -81,6 +99,13 @@ fun MainUI(modifier: Modifier = Modifier, viewModel: ViewModel) {
                     Icons.Default.Warning
                 ) { viewModel.requestOnTopPermission(context) }
             }
+            if (!isNotificationPermissionGranted) {
+                StandardText("Notification access is required")
+                StandardButton(
+                    "Allow notification access",
+                    Icons.Default.Warning
+                ) { requestNotificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS) }
+            }
         }
 
         item {
@@ -91,7 +116,7 @@ fun MainUI(modifier: Modifier = Modifier, viewModel: ViewModel) {
             StandardSwitch(
                 "Replace Game Space",
                 mainSwitchStatus.value,
-                enabled = isUsageStatsPermissionGranted && isOnTopPermissionGranted && appHasBeenChoosed
+                enabled = isUsageStatsPermissionGranted && isOnTopPermissionGranted && isNotificationPermissionGranted && appHasBeenChoosed
             ) {
                 mainSwitchStatus.value = it
                 viewModel.setServiceStatus(context, mainSwitchStatus.value)

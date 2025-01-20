@@ -4,10 +4,13 @@ import android.app.ActivityManager
 import android.app.AppOpsManager
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
 import android.net.Uri
+import android.os.Build
 import android.provider.Settings
 import android.util.Log
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -18,6 +21,9 @@ class ViewModel : ViewModel() {
 
     private val _isOnTopPermissionGranted = MutableLiveData<Boolean>()
     val isOnTopPermissionGranted: LiveData<Boolean> get() = _isOnTopPermissionGranted
+
+    private val _isNotificationPermissionGranted = MutableLiveData<Boolean>()
+    val isNotificationPermissionGranted: LiveData<Boolean> get() = _isNotificationPermissionGranted
 
     private val _appHasBeenChoosed = MutableLiveData<Boolean>()
     val appHasBeenChoosed: LiveData<Boolean> get() = _appHasBeenChoosed
@@ -41,6 +47,7 @@ class ViewModel : ViewModel() {
         Log.d("ViewModel", "Launched viewmodel")
         _isUsageStatsPermissionGranted.value = isUsageStatsPermissionGranted(context)
         _isOnTopPermissionGranted.value = isOnTopPermissionGranted(context)
+        _isNotificationPermissionGranted.value = isNotificationPermissionGranted(context)
     }
 
     fun setApptarget(packageName: String, appName: String, context: Context) {
@@ -127,6 +134,25 @@ class ViewModel : ViewModel() {
 
     fun requestOnTopPermission(context: Context) {
         val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
+        context.startActivity(intent)
+    }
+
+    fun isNotificationPermissionGranted(context: Context): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            ContextCompat.checkSelfPermission(
+                context,
+                android.Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
+        } else {
+            // For versions below Android 13, notification permission is implicitly granted.
+            true
+        }
+    }
+
+    fun openNotificationPermissionSettings(context: Context) {
+        val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+            putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+        }
         context.startActivity(intent)
     }
 
