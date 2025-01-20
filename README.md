@@ -45,7 +45,6 @@ It should work on any modern REDMAGIC device. If you encounter any issues, pleas
 ## Common Issues
 - **REDMAGIC 10 Devices must have set the switch to launch the Game Space.**
 - The REDMAGIC Game Space briefly appears before the selected app launches.
-- When Installing the apk Play Protect will complain about the app made for an older Android version, you have to press on `Learn more` and `Install anyways`.
 
 ## Installation
 - Go to the [Releases page](https://github.com/TheRealCrazyfuy/GameSpaceReplacer/releases) and download the latest release.
