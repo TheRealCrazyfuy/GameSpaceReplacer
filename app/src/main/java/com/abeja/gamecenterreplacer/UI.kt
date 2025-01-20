@@ -62,7 +62,7 @@ fun MainUI(modifier: Modifier = Modifier, viewModel: ViewModel) {
     val isOnTopPermissionGranted by viewModel.isOnTopPermissionGranted.observeAsState(false)
     val isNotificationPermissionGranted by viewModel.isNotificationPermissionGranted.observeAsState(false)
     val appHasBeenChoosed by viewModel.appHasBeenChoosed.observeAsState(false)
-    val appTargetName by viewModel.appTargetName.observeAsState("")
+    val appTargetName by viewModel.appTargetName.observeAsState("None")
 
     val requestNotificationLauncher: ActivityResultLauncher<String> = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
