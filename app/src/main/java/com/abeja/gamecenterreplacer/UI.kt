@@ -55,6 +55,7 @@ fun MainUI(modifier: Modifier = Modifier, viewModel: ViewModel) {
             )
         )
     }
+    val startOnBootSwitchStatus = remember { mutableStateOf(viewModel.getStartOnBoot(context)) }
     val showAppsDialog = remember { mutableStateOf(false) }
 
     // TODO: Figure a better way to update the UI
@@ -120,6 +121,13 @@ fun MainUI(modifier: Modifier = Modifier, viewModel: ViewModel) {
             ) {
                 mainSwitchStatus.value = it
                 viewModel.setServiceStatus(context, mainSwitchStatus.value)
+            }
+            StandardSwitch("Start on boot",
+                startOnBootSwitchStatus.value,
+                enabled = isUsageStatsPermissionGranted && isOnTopPermissionGranted && isNotificationPermissionGranted && appHasBeenChoosed)
+            {
+                startOnBootSwitchStatus.value = it
+                viewModel.setStartOnBoot(context, startOnBootSwitchStatus.value)
             }
 
             StandardText(

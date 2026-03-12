@@ -64,6 +64,14 @@ class ViewModel : ViewModel() {
         savePreferences(context, "appTargetName", appName)
     }
 
+    fun setStartOnBoot(context: Context, startOnBoot: Boolean) {
+        savePreferences(context, "startOnBoot", startOnBoot.toString())
+    }
+
+    fun getStartOnBoot(context: Context): Boolean {
+        return getPreferences(context, "startOnBoot")?.toBoolean() ?: false
+    }
+
     fun getApptargetPackage(): String? {
         return serviceData.appTargetPackage
     }
