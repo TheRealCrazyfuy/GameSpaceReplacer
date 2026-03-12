@@ -1,3 +1,19 @@
 <resources>
     <string name="app_name">Game Space Replacer</string>
+    <string name="usage_access_permission_alert_title">Usage access permission required</string>
+    <string name="usage_access_permission_alert_description">This permission is required to detect when the game center app is on screen.</string>
+    <string name="display_over_other_apps_permission_alert_title">Display over other apps required</string>
+    <string name="display_over_other_apps_permission_alert_description">This permission is required to launch any activity on top of the game space app.</string>
+    <string name="notification_access_permission_alert_title">Notification access permission required</string>
+    <string name="notification_access_permission_alert_description">This permission is required to keep the service running in the background.</string>
+    <string name="grant_dialog_button">Grant</string>
+    <string name="usage_access_permission_button_text">The usage access permission is required</string>
+    <string name="display_over_other_apps_permission_button_text">The display over other apps permission is required</string>
+    <string name="nortification_permission_button_text">The notification permission is required</string>
+    <string name="start_service">Start service</string>
+    <string name="start_on_boot">Start on boot</string>
+    <string name="choose_an_app">Choose an app</string>
+    <string name="selected_app">Selected app: %1$s</string>
+    <string name="version_number">Version %1$s (%2$s)</string>
+    <string name="select_an_app">Select an app</string>
 </resources>

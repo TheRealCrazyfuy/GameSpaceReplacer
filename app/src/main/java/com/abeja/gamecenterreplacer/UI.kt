@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import android.Manifest
 import android.util.Log
+import androidx.compose.ui.res.stringResource
 
 @Composable
 fun MainUI(modifier: Modifier = Modifier, viewModel: ViewModel) {
@@ -62,7 +63,7 @@ fun MainUI(modifier: Modifier = Modifier, viewModel: ViewModel) {
     val isUsageStatsPermissionGranted by viewModel.isUsageStatsPermissionGranted.observeAsState(false)
     val usageStatsPermissionDialog = remember { mutableStateOf(false) }
     val isOnTopPermissionGranted by viewModel.isOnTopPermissionGranted.observeAsState(false)
-    val onTopPermissionDialog = remember { mutableStateOf(false) }
+    val displayOverOtherAppsPermissionDialog = remember { mutableStateOf(false) }
     val isNotificationPermissionGranted by viewModel.isNotificationPermissionGranted.observeAsState(false)
     val notificationPermissionDialog = remember { mutableStateOf(false) }
     val appHasBeenChoosed by viewModel.appHasBeenChoosed.observeAsState(false)
@@ -83,38 +84,38 @@ fun MainUI(modifier: Modifier = Modifier, viewModel: ViewModel) {
 
     if (usageStatsPermissionDialog.value) {
         StandardAlertDialog(
-            title = "Usage access permission required",
-            text = "This permission is required to detect when the game center app is on screen.",
+            title = stringResource(R.string.usage_access_permission_alert_title),
+            text = stringResource(R.string.usage_access_permission_alert_description),
             onDismiss = { usageStatsPermissionDialog.value = false },
             onConfirm = {
                 usageStatsPermissionDialog.value = false
                 viewModel.requestUsageStatsPermission(context)
             },
-            confirmText = "Grant"
+            confirmText = stringResource(R.string.grant_dialog_button)
         )
     }
-    if (onTopPermissionDialog.value) {
+    if (displayOverOtherAppsPermissionDialog.value) {
         StandardAlertDialog(
-            title = "On top permission required",
-            text = "This permission is required to launch any activity on top of the game space app.",
-            onDismiss = { onTopPermissionDialog.value = false },
+            title = stringResource(R.string.display_over_other_apps_permission_alert_title),
+            text = stringResource(R.string.display_over_other_apps_permission_alert_description),
+            onDismiss = { displayOverOtherAppsPermissionDialog.value = false },
             onConfirm = {
-                onTopPermissionDialog.value = false
+                displayOverOtherAppsPermissionDialog.value = false
                 viewModel.requestOnTopPermission(context)
             },
-            confirmText = "Grant"
+            confirmText = stringResource(R.string.grant_dialog_button)
         )
     }
     if (notificationPermissionDialog.value) {
         StandardAlertDialog(
-            title = "Notification access permission required",
-            text = "This permission is required to keep the service running in the background.",
+            title = stringResource(R.string.notification_access_permission_alert_title),
+            text = stringResource(R.string.notification_access_permission_alert_description),
             onDismiss = { notificationPermissionDialog.value = false },
             onConfirm = {
                 notificationPermissionDialog.value = false
                 requestNotificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
             },
-            confirmText = "Grant"
+            confirmText = stringResource(R.string.grant_dialog_button)
         )
     }
 
@@ -128,19 +129,19 @@ fun MainUI(modifier: Modifier = Modifier, viewModel: ViewModel) {
              */
             if (!isUsageStatsPermissionGranted) {
                 StandardButton(
-                    "Usage access is required",
+                    stringResource(R.string.usage_access_permission_button_text),
                     Icons.Default.Warning
                 ) { usageStatsPermissionDialog.value = true }
             }
             if (!isOnTopPermissionGranted) {
                 StandardButton(
-                    "On top permission is required",
+                    stringResource(R.string.display_over_other_apps_permission_button_text),
                     Icons.Default.Warning
-                ) { onTopPermissionDialog.value = true }
+                ) { displayOverOtherAppsPermissionDialog.value = true }
             }
             if (!isNotificationPermissionGranted) {
                 StandardButton(
-                    "Notification access is required",
+                    stringResource(R.string.nortification_permission_button_text),
                     Icons.Default.Warning
                 ) { notificationPermissionDialog.value = true}
             }
@@ -150,16 +151,16 @@ fun MainUI(modifier: Modifier = Modifier, viewModel: ViewModel) {
             /**
              * Main UI
              */
-            StandardText("Turn on the switch below to automatically launch your chosen app whenever you activate the competitive key.")
             StandardSwitch(
-                "Start service",
+                stringResource(R.string.start_service),
                 mainSwitchStatus.value,
                 enabled = isUsageStatsPermissionGranted && isOnTopPermissionGranted && isNotificationPermissionGranted && appHasBeenChoosed
             ) {
                 mainSwitchStatus.value = it
                 viewModel.setServiceStatus(context, mainSwitchStatus.value)
             }
-            StandardSwitch("Start on boot",
+            StandardSwitch(
+                stringResource(R.string.start_on_boot),
                 startOnBootSwitchStatus.value,
                 enabled = isUsageStatsPermissionGranted && isOnTopPermissionGranted && isNotificationPermissionGranted && appHasBeenChoosed)
             {
@@ -168,9 +169,9 @@ fun MainUI(modifier: Modifier = Modifier, viewModel: ViewModel) {
             }
 
             StandardText(
-                "Chosen app: $appTargetName",
+                stringResource(R.string.selected_app, appTargetName),
             )
-            StandardButton("Choose a different app", Icons.AutoMirrored.Filled.List) {
+            StandardButton(stringResource(R.string.choose_an_app), Icons.AutoMirrored.Filled.List) {
                 showAppsDialog.value = true
             }
         }
@@ -190,7 +191,12 @@ fun MainUI(modifier: Modifier = Modifier, viewModel: ViewModel) {
                 }
             }
 
-            StandardText("Version ${BuildConfig.VERSION_NAME} (${BuildConfig.BUILD_TYPE})")
+            StandardText(
+                stringResource(
+                    R.string.version_number,
+                    BuildConfig.VERSION_NAME,
+                    BuildConfig.BUILD_TYPE
+                ))
 
             StandardLinkIcon(
                 onClickGitHub = { viewModel.openGitHubRepository(context, "https://www.github.com/therealcrazyfuy/GameSpaceReplacer") },
@@ -283,12 +289,18 @@ fun StandardLinkIcon(
         Icon(
             painter = painterResource(id= R.drawable.github_mark),
             contentDescription = null,
-            modifier = Modifier.size(42.dp).padding(end = 8.dp).clickable(onClick = onClickGitHub)
+            modifier = Modifier
+                .size(42.dp)
+                .padding(end = 8.dp)
+                .clickable(onClick = onClickGitHub)
         )
         Icon(
             painter = painterResource(id= R.drawable.discord_mark),
             contentDescription = null,
-            modifier = Modifier.size(42.dp).padding(end = 8.dp).clickable(onClick = onClickDiscord)
+            modifier = Modifier
+                .size(42.dp)
+                .padding(end = 8.dp)
+                .clickable(onClick = onClickDiscord)
         )
 
     }
@@ -313,7 +325,7 @@ fun AppListDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
-            Text(text = "Choose an app to launch")
+            Text(text = stringResource(R.string.select_an_app))
         },
         text = {
             LazyColumn {
