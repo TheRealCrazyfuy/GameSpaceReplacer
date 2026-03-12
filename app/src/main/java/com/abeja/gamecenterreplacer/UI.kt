@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
 import android.Manifest
 import android.util.Log
+import androidx.compose.material3.TextField
 import androidx.compose.ui.res.stringResource
 
 @Composable
@@ -321,6 +322,19 @@ fun AppListDialog(
             .sortedBy { it.loadLabel(context.packageManager).toString() }
     }
     val packageManager = context.packageManager
+    val searchText = remember { mutableStateOf("") }
+    val searchResults = remember(searchText.value) {
+        if (searchText.value.isEmpty()) {
+            launchableApps
+        } else {
+            launchableApps.filter {
+                it.loadLabel(packageManager).toString()
+                    .contains(searchText.value, ignoreCase = true) ||
+                        it.activityInfo.packageName
+                            .contains(searchText.value, ignoreCase = true)
+            }
+        }
+    }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -328,30 +342,39 @@ fun AppListDialog(
             Text(text = stringResource(R.string.select_an_app))
         },
         text = {
-            LazyColumn {
-                items(launchableApps) { appInfo ->
-                    val appName = appInfo.loadLabel(packageManager).toString()
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { onAppSelected(appInfo) }
-                            .padding(8.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Image(
-                            bitmap = appInfo.loadIcon(packageManager).toBitmap().asImageBitmap(),
-                            contentDescription = null,
-                            modifier = Modifier.size(40.dp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Column {
-                            Text(text = appName)
-                            Text(text = appInfo.activityInfo.packageName)
+            Column {
+                TextField(
+                    value = searchText.value,
+                    onValueChange = { searchText.value = it },
+                    placeholder = { Text(stringResource(R.string.search_placeholder)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = true
+                )
+
+                LazyColumn {
+                    items(searchResults) { appInfo ->
+                        val appName = appInfo.loadLabel(packageManager).toString()
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { onAppSelected(appInfo) }
+                                .padding(8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Image(
+                                bitmap = appInfo.loadIcon(packageManager).toBitmap().asImageBitmap(),
+                                contentDescription = null,
+                                modifier = Modifier.size(40.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Column {
+                                Text(text = appName)
+                                Text(text = appInfo.activityInfo.packageName)
+                            }
                         }
                     }
                 }
             }
-
         },
         confirmButton = {
             TextButton(onClick = onDismiss) {
