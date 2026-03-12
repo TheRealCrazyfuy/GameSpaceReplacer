@@ -60,8 +60,11 @@ fun MainUI(modifier: Modifier = Modifier, viewModel: ViewModel) {
 
     // TODO: Figure a better way to update the UI
     val isUsageStatsPermissionGranted by viewModel.isUsageStatsPermissionGranted.observeAsState(false)
+    val usageStatsPermissionDialog = remember { mutableStateOf(false) }
     val isOnTopPermissionGranted by viewModel.isOnTopPermissionGranted.observeAsState(false)
+    val onTopPermissionDialog = remember { mutableStateOf(false) }
     val isNotificationPermissionGranted by viewModel.isNotificationPermissionGranted.observeAsState(false)
+    val notificationPermissionDialog = remember { mutableStateOf(false) }
     val appHasBeenChoosed by viewModel.appHasBeenChoosed.observeAsState(false)
     val appTargetName by viewModel.appTargetName.observeAsState("None")
 
@@ -78,6 +81,43 @@ fun MainUI(modifier: Modifier = Modifier, viewModel: ViewModel) {
         }
     }
 
+    if (usageStatsPermissionDialog.value) {
+        StandardAlertDialog(
+            title = "Usage access permission required",
+            text = "This permission is required to detect when the game center app is on screen.",
+            onDismiss = { usageStatsPermissionDialog.value = false },
+            onConfirm = {
+                usageStatsPermissionDialog.value = false
+                viewModel.requestUsageStatsPermission(context)
+            },
+            confirmText = "Grant"
+        )
+    }
+    if (onTopPermissionDialog.value) {
+        StandardAlertDialog(
+            title = "On top permission required",
+            text = "This permission is required to launch any activity on top of the game space app.",
+            onDismiss = { onTopPermissionDialog.value = false },
+            onConfirm = {
+                onTopPermissionDialog.value = false
+                viewModel.requestOnTopPermission(context)
+            },
+            confirmText = "Grant"
+        )
+    }
+    if (notificationPermissionDialog.value) {
+        StandardAlertDialog(
+            title = "Notification access permission required",
+            text = "This permission is required to keep the service running in the background.",
+            onDismiss = { notificationPermissionDialog.value = false },
+            onConfirm = {
+                notificationPermissionDialog.value = false
+                requestNotificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            },
+            confirmText = "Grant"
+        )
+    }
+
     LazyColumn(modifier = modifier
         .padding(top = 56.dp)
         .fillMaxWidth()) {
@@ -87,25 +127,22 @@ fun MainUI(modifier: Modifier = Modifier, viewModel: ViewModel) {
              * Permissions check
              */
             if (!isUsageStatsPermissionGranted) {
-                StandardText("Usage access is required")
                 StandardButton(
-                    "Allow usage access",
+                    "Usage access is required",
                     Icons.Default.Warning
-                ) { viewModel.requestUsageStatsPermission(context) }
+                ) { usageStatsPermissionDialog.value = true }
             }
             if (!isOnTopPermissionGranted) {
-                StandardText("On top permission is required")
                 StandardButton(
-                    "Allow on top permission",
+                    "On top permission is required",
                     Icons.Default.Warning
-                ) { viewModel.requestOnTopPermission(context) }
+                ) { onTopPermissionDialog.value = true }
             }
             if (!isNotificationPermissionGranted) {
-                StandardText("Notification access is required")
                 StandardButton(
-                    "Allow notification access",
+                    "Notification access is required",
                     Icons.Default.Warning
-                ) { requestNotificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS) }
+                ) { notificationPermissionDialog.value = true}
             }
         }
 
@@ -307,6 +344,39 @@ fun AppListDialog(
         confirmButton = {
             TextButton(onClick = onDismiss) {
                 Text("Close")
+            }
+        }
+    )
+}
+
+/**
+ * Standard AlertDialog
+ */
+@Composable
+fun StandardAlertDialog(
+    title: String,
+    text: String,
+    dismissText: String = "Cancel",
+    confirmText: String = "OK",
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit = onDismiss
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(text = title)
+        },
+        text = {
+            Text(text = text)
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(dismissText)
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onConfirm) {
+                Text(confirmText)
             }
         }
     )
