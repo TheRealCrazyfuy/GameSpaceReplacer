@@ -16,13 +16,25 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class BackgroundService : Service() {
-    private val targetAppPackage = serviceData.appTargetPackage
-    private val targetAppName = serviceData.appTargetName
+    private var targetAppPackage = serviceData.appTargetPackage
+    private var targetAppName = serviceData.appTargetName
     private val triggerAppPackage = "cn.nubia.gamelauncher"
     private val serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        //requestUsageStatsPermission()
+        val sharedPref = getSharedPreferences("com.abeja.gamecenterreplacer", Context.MODE_PRIVATE)
+        val savedAppTargetPackage = sharedPref.getString("appTargetPackage", null)
+        val savedAppTargetName = sharedPref.getString("appTargetName", null)
+
+        if (targetAppPackage == null && savedAppTargetPackage != null) {
+            targetAppPackage = savedAppTargetPackage
+            Log.d("BackgroundService", "Loaded appTargetPackage from SharedPreferences: $savedAppTargetPackage")
+        }
+
+        if (targetAppName == null && savedAppTargetName != null) {
+            targetAppName = savedAppTargetName
+            Log.d("BackgroundService", "Loaded appTargetName from SharedPreferences: $savedAppTargetName")
+        }
 
         val channelId = "GameCenterReplacer"
         val channelName = "Background Service"
