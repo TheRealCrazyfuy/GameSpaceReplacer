@@ -153,7 +153,7 @@ fun MainUI(modifier: Modifier = Modifier, viewModel: ViewModel) {
                 }
             }
 
-            StandardText("Version ${BuildConfig.VERSION_NAME}")
+            StandardText("Version ${BuildConfig.VERSION_NAME} (${BuildConfig.BUILD_TYPE})")
 
             StandardLinkIcon(
                 onClickGitHub = { viewModel.openGitHubRepository(context, "https://www.github.com/therealcrazyfuy/GameSpaceReplacer") },
