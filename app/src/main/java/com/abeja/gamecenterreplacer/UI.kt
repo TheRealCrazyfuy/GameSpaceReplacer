@@ -115,7 +115,7 @@ fun MainUI(modifier: Modifier = Modifier, viewModel: ViewModel) {
              */
             StandardText("Turn on the switch below to automatically launch your chosen app whenever you activate the competitive key.")
             StandardSwitch(
-                "Replace Game Space",
+                "Start service",
                 mainSwitchStatus.value,
                 enabled = isUsageStatsPermissionGranted && isOnTopPermissionGranted && isNotificationPermissionGranted && appHasBeenChoosed
             ) {
