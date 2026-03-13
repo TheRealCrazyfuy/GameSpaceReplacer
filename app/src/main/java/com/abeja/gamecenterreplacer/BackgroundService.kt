@@ -53,6 +53,7 @@ class BackgroundService : Service() {
             .setContentTitle("Red switch set to: $targetAppName")
             //.setContentText("Long press this notification to hide.")
             .setSmallIcon(R.mipmap.ic_launcher)
+            .setSilent(true)
             .build()
 
         startForeground(1, notification)
