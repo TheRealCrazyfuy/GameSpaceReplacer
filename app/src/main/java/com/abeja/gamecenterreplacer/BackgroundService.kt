@@ -11,14 +11,14 @@ import android.os.IBinder
 import android.provider.Settings
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import com.abeja.gamecenterreplacer.observers.GameSwitchObserver
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 
 class BackgroundService : Service() {
     private var targetAppPackage = serviceData.appTargetPackage
     private var targetAppName = serviceData.appTargetName
     private val triggerAppPackage = "cn.nubia.gamelauncher"
+    private lateinit var gameSwitchObserver: GameSwitchObserver
     private val serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -51,19 +51,21 @@ class BackgroundService : Service() {
         startForeground(1, notification)
 
         serviceScope.launch {
-            monitorApps().collect { event ->
-                //Log.d("BackgroundService", "Event: ${event.packageName}")
-                if ( event.packageName == triggerAppPackage) {
-                    //Log.d("BackgroundService", "Trigger app detected")
-                    //startOrResumeTargetApp()
-                }
-            }
+            monitorApps()
         }
 
         return START_STICKY
     }
 
-    private fun monitorApps(): Flow<UsageEvents.Event> = flow {
+    private suspend fun monitorApps() {
+        gameSwitchObserver = GameSwitchObserver(this) { isGameSwitchOn ->
+            Log.d("BackgroundService", "Game switch state changed: $isGameSwitchOn")
+            if (isGameSwitchOn) {
+                Log.d("BackgroundService", "Game switch enabled, starting target app")
+                startOrResumeTargetApp()
+            }
+        }
+        gameSwitchObserver.register()
         val usageStatsManager = getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
         while (true) {
             val endTime = System.currentTimeMillis()
@@ -77,7 +79,6 @@ class BackgroundService : Service() {
                 if (event.eventType == UsageEvents.Event.MOVE_TO_FOREGROUND) {
                     currentForegroundApp = event.packageName
                 }
-                emit(event)
             }
 
             if (currentForegroundApp == triggerAppPackage) {
@@ -109,6 +110,7 @@ class BackgroundService : Service() {
 
     override fun onDestroy() {
         serviceScope.cancel()
+        gameSwitchObserver.unregister()
         super.onDestroy()
     }
 }
