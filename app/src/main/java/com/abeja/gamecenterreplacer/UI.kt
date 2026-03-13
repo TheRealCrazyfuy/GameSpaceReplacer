@@ -39,9 +39,11 @@ fun MainUI(modifier: Modifier = Modifier, viewModel: ViewModel) {
     val showAdvancedOptionsBottomSheet = remember { mutableStateOf(false) }
 
     // TODO: Figure a better way to update the UI
+    val isBatteryOptimizationIgnored by viewModel.isBatteryOptimizationIgnored.observeAsState(false)
     val isUsageStatsPermissionGranted by viewModel.isUsageStatsPermissionGranted.observeAsState(
         false
     )
+    val batteryOptimizationDialog = remember { mutableStateOf(false) }
     val usageStatsPermissionDialog = remember { mutableStateOf(false) }
     val isOnTopPermissionGranted by viewModel.isOnTopPermissionGranted.observeAsState(false)
     val displayOverOtherAppsPermissionDialog = remember { mutableStateOf(false) }
@@ -66,7 +68,21 @@ fun MainUI(modifier: Modifier = Modifier, viewModel: ViewModel) {
                 viewModel.openNotificationPermissionSettings(context)
             }
         }
-
+    if (batteryOptimizationDialog.value) {
+        StandardAlertDialog(
+            title = stringResource(R.string.battery_optimization_enabled_alert_title),
+            text = stringResource(
+                R.string.battery_optimization_enabled_alert_description,
+                stringResource(R.string.app_name)
+            ),
+            onDismiss = { batteryOptimizationDialog.value = false },
+            onConfirm = {
+                batteryOptimizationDialog.value = false
+                viewModel.requestIgnoreBatteryOptimization(context)
+            },
+            confirmText = stringResource(R.string.grant_dialog_button)
+        )
+    }
     if (usageStatsPermissionDialog.value) {
         StandardAlertDialog(
             title = stringResource(R.string.usage_access_permission_alert_title),
@@ -113,6 +129,12 @@ fun MainUI(modifier: Modifier = Modifier, viewModel: ViewModel) {
             /**
              * Permissions check
              */
+            if (!isBatteryOptimizationIgnored) {
+                StandardButton(
+                    stringResource(R.string.battery_optimization_enabled),
+                    ImageVector.vectorResource(id = R.drawable.warning_24px)
+                ) { batteryOptimizationDialog.value = true }
+            }
             if (!isUsageStatsPermissionGranted) {
                 StandardButton(
                     stringResource(R.string.usage_access_permission_button_text),

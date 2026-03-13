@@ -2,12 +2,14 @@ package com.abeja.gamecenterreplacer
 
 import android.app.ActivityManager
 import android.app.AppOpsManager
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
 import android.net.Uri
 import android.os.Build
+import android.os.PowerManager
 import android.provider.Settings
 import android.util.Log
 import androidx.core.content.ContextCompat
@@ -16,6 +18,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
 class ViewModel : ViewModel() {
+    private val _isBatteryOptimizationIgnored = MutableLiveData<Boolean>()
+    val isBatteryOptimizationIgnored: LiveData<Boolean> get() = _isBatteryOptimizationIgnored
+
     private val _isUsageStatsPermissionGranted = MutableLiveData<Boolean>()
     val isUsageStatsPermissionGranted: LiveData<Boolean> get() = _isUsageStatsPermissionGranted
 
@@ -45,6 +50,7 @@ class ViewModel : ViewModel() {
             Log.d("ViewModel", "No app target set initially.")
         }
         Log.d("ViewModel", "Launched viewmodel")
+        _isBatteryOptimizationIgnored.value = isBatteryOptimizationIgnored(context)
         _isUsageStatsPermissionGranted.value = isUsageStatsPermissionGranted(context)
         _isOnTopPermissionGranted.value = isOnTopPermissionGranted(context)
         _isNotificationPermissionGranted.value = isNotificationPermissionGranted(context)
@@ -66,6 +72,35 @@ class ViewModel : ViewModel() {
         // Save preferences
         savePreferences(context, "appTargetPackage", packageName)
         savePreferences(context, "appTargetName", appName)
+    }
+
+    fun isBatteryOptimizationIgnored(context: Context): Boolean {
+        val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
+        return powerManager.isIgnoringBatteryOptimizations(context.packageName)
+    }
+
+    fun requestIgnoreBatteryOptimization(context: Context) {
+        val intents = listOf(
+            Intent().setComponent(
+                ComponentName(
+                    "com.zte.powersavemode",
+                    "com.zte.powersavemode.appsmartoptimizer.AppSmartOptimizeDetailActivity"
+                )
+            ),
+            Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS)
+        )
+
+        for (intent in intents) {
+            try {
+                context.startActivity(intent)
+                break
+            } catch (_: Exception) {
+                Log.e(
+                    "ViewModel",
+                    "Failed to start intent: ${intent.component?.className ?: intent.action}"
+                )
+            }
+        }
     }
 
     fun setRelaunchTargetApp(context: Context, relaunchTargetApp: Boolean) {

@@ -19,4 +19,7 @@
     <string name="search_placeholder">Search</string>
     <string name="advanced_options">Advanced options</string>
     <string name="relaunch_target_app_option">Launch the target app again on exit</string>
+    <string name="battery_optimization_enabled">Battery optimization is enabled</string>
+    <string name="battery_optimization_enabled_alert_title">Battery optimization enabled</string>
+    <string name="battery_optimization_enabled_alert_description">The system will kill the service in background, search for %1$s in the following app list and set the battery to not optimize to disable the battery optimizations</string>
 </resources>
