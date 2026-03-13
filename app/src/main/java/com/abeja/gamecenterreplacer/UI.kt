@@ -1,51 +1,22 @@
 package com.abeja.gamecenterreplacer
 
-import android.content.Context
-import android.content.pm.ResolveInfo
+import android.Manifest
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.List
-import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Switch
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
-import androidx.core.graphics.drawable.toBitmap
-import android.Manifest
-import android.graphics.Bitmap
-import android.util.Log
-import androidx.compose.material3.TextField
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 
 @Composable
 fun MainUI(modifier: Modifier = Modifier, viewModel: ViewModel) {
@@ -62,27 +33,32 @@ fun MainUI(modifier: Modifier = Modifier, viewModel: ViewModel) {
     val showAppsDialog = remember { mutableStateOf(false) }
 
     // TODO: Figure a better way to update the UI
-    val isUsageStatsPermissionGranted by viewModel.isUsageStatsPermissionGranted.observeAsState(false)
+    val isUsageStatsPermissionGranted by viewModel.isUsageStatsPermissionGranted.observeAsState(
+        false
+    )
     val usageStatsPermissionDialog = remember { mutableStateOf(false) }
     val isOnTopPermissionGranted by viewModel.isOnTopPermissionGranted.observeAsState(false)
     val displayOverOtherAppsPermissionDialog = remember { mutableStateOf(false) }
-    val isNotificationPermissionGranted by viewModel.isNotificationPermissionGranted.observeAsState(false)
+    val isNotificationPermissionGranted by viewModel.isNotificationPermissionGranted.observeAsState(
+        false
+    )
     val notificationPermissionDialog = remember { mutableStateOf(false) }
     val appHasBeenChoosed by viewModel.appHasBeenChoosed.observeAsState(false)
     val appTargetName by viewModel.appTargetName.observeAsState("None")
 
-    val requestNotificationLauncher: ActivityResultLauncher<String> = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
-    ) { isGranted: Boolean ->
-        if (isGranted) {
-            // Permission granted
-            Log.d("MainUI", "Notification permission granted")
-        } else {
-            // Permission denied
-            Log.d("MainUI", "Notification permission denied")
-            viewModel.openNotificationPermissionSettings(context)
+    val requestNotificationLauncher: ActivityResultLauncher<String> =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.RequestPermission()
+        ) { isGranted: Boolean ->
+            if (isGranted) {
+                // Permission granted
+                Log.d("MainUI", "Notification permission granted")
+            } else {
+                // Permission denied
+                Log.d("MainUI", "Notification permission denied")
+                viewModel.openNotificationPermissionSettings(context)
+            }
         }
-    }
 
     if (usageStatsPermissionDialog.value) {
         StandardAlertDialog(
@@ -121,9 +97,10 @@ fun MainUI(modifier: Modifier = Modifier, viewModel: ViewModel) {
         )
     }
 
-    LazyColumn(modifier = modifier
-        .padding(top = 56.dp)
-        .fillMaxWidth()) {
+    LazyColumn(
+        modifier = modifier
+            .fillMaxWidth()
+    ) {
 
         item {
             /**
@@ -132,20 +109,20 @@ fun MainUI(modifier: Modifier = Modifier, viewModel: ViewModel) {
             if (!isUsageStatsPermissionGranted) {
                 StandardButton(
                     stringResource(R.string.usage_access_permission_button_text),
-                    Icons.Default.Warning
+                    ImageVector.vectorResource(id = R.drawable.warning_24px)
                 ) { usageStatsPermissionDialog.value = true }
             }
             if (!isOnTopPermissionGranted) {
                 StandardButton(
                     stringResource(R.string.display_over_other_apps_permission_button_text),
-                    Icons.Default.Warning
+                    ImageVector.vectorResource(id = R.drawable.warning_24px)
                 ) { displayOverOtherAppsPermissionDialog.value = true }
             }
             if (!isNotificationPermissionGranted) {
                 StandardButton(
                     stringResource(R.string.nortification_permission_button_text),
-                    Icons.Default.Warning
-                ) { notificationPermissionDialog.value = true}
+                    ImageVector.vectorResource(id = R.drawable.warning_24px)
+                ) { notificationPermissionDialog.value = true }
             }
         }
 
@@ -164,7 +141,8 @@ fun MainUI(modifier: Modifier = Modifier, viewModel: ViewModel) {
             StandardSwitch(
                 stringResource(R.string.start_on_boot),
                 startOnBootSwitchStatus.value,
-                enabled = isUsageStatsPermissionGranted && isOnTopPermissionGranted && isNotificationPermissionGranted && appHasBeenChoosed)
+                enabled = isUsageStatsPermissionGranted && isOnTopPermissionGranted && isNotificationPermissionGranted && appHasBeenChoosed
+            )
             {
                 startOnBootSwitchStatus.value = it
                 viewModel.setStartOnBoot(context, startOnBootSwitchStatus.value)
@@ -173,7 +151,10 @@ fun MainUI(modifier: Modifier = Modifier, viewModel: ViewModel) {
             StandardText(
                 stringResource(R.string.selected_app, appTargetName),
             )
-            StandardButton(stringResource(R.string.choose_an_app), Icons.AutoMirrored.Filled.List) {
+            StandardButton(
+                stringResource(R.string.choose_an_app),
+                ImageVector.vectorResource(id = R.drawable.list_24px)
+            ) {
                 showAppsDialog.value = true
             }
         }
@@ -193,238 +174,8 @@ fun MainUI(modifier: Modifier = Modifier, viewModel: ViewModel) {
                 }
             }
 
-            StandardText(
-                stringResource(
-                    R.string.version_number,
-                    BuildConfig.VERSION_NAME,
-                    BuildConfig.BUILD_TYPE
-                ))
 
-            StandardLinkIcon(
-                onClickGitHub = { viewModel.openGitHubRepository(context, "https://www.github.com/therealcrazyfuy/GameSpaceReplacer") },
-                onClickDiscord = { viewModel.openGitHubRepository(context, "https://discord.gg/Hc4UPXqc4j") }
-            )
         }
     }
 }
 
-@Composable
-fun StandardText(text: String) {
-    Text(
-        text = text,
-        style = MaterialTheme.typography.bodyLarge,
-        modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
-    )
-}
-
-@Composable
-fun StandardSwitch(
-    text: String,
-    checked: Boolean,
-    enabled: Boolean = true,
-    onCheckedChange: (Boolean) -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 12.dp)
-            .clickable(enabled) { onCheckedChange(!checked) },
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.padding(end = 8.dp)
-        )
-        Spacer(modifier = Modifier.weight(1f))
-        Switch(
-            checked = checked,
-            enabled = enabled,
-            onCheckedChange = {
-                onCheckedChange(it)
-            }
-        )
-    }
-}
-
-@Composable
-fun StandardButton(
-    text: String,
-    icon: ImageVector,
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 12.dp)
-            .background(Color.Transparent),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null,
-            modifier = Modifier.size(24.dp)
-        )
-        Spacer(modifier = Modifier.width(16.dp))
-        Text(
-            text = text,
-            style = MaterialTheme.typography.bodyLarge,
-        )
-    }
-}
-
-@Composable
-fun StandardLinkIcon(
-    onClickGitHub: () -> Unit,
-    onClickDiscord: () -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 12.dp)
-            .background(Color.Transparent),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
-    ) {
-        Icon(
-            painter = painterResource(id= R.drawable.github_mark),
-            contentDescription = null,
-            modifier = Modifier
-                .size(42.dp)
-                .padding(end = 8.dp)
-                .clickable(onClick = onClickGitHub)
-        )
-        Icon(
-            painter = painterResource(id= R.drawable.discord_mark),
-            contentDescription = null,
-            modifier = Modifier
-                .size(42.dp)
-                .padding(end = 8.dp)
-                .clickable(onClick = onClickDiscord)
-        )
-
-    }
-}
-
-/**
- * Dialog to choose a different app
- */
-@Composable
-fun AppListDialog(
-    context: Context,
-    viewModel: ViewModel,
-    onDismiss: () -> Unit,
-    onAppSelected: (ResolveInfo) -> Unit
-) {
-    val packageManager = context.packageManager
-    val launchableApps = remember {
-        viewModel.getLaunchableApps(context)
-            .sortedBy { it.loadLabel(packageManager).toString() }
-    }
-    val searchText = remember { mutableStateOf("") }
-    val searchResults = remember(searchText.value) {
-        if (searchText.value.isEmpty()) {
-            launchableApps
-        } else {
-            launchableApps.filter {
-                it.loadLabel(packageManager).toString()
-                    .contains(searchText.value, ignoreCase = true) ||
-                        it.activityInfo.packageName
-                            .contains(searchText.value, ignoreCase = true)
-            }
-        }
-    }
-
-    val appInfoCache = remember {
-        mutableMapOf<String, Pair<String, Bitmap>>() // packageName to (appName, appIcon)
-    }
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = {
-            Text(text = stringResource(R.string.select_an_app))
-        },
-        text = {
-            Column {
-                TextField(
-                    value = searchText.value,
-                    onValueChange = { searchText.value = it },
-                    placeholder = { Text(stringResource(R.string.search_placeholder)) },
-                    modifier = Modifier.fillMaxWidth(),
-                    enabled = true
-                )
-
-                LazyColumn {
-                    items(searchResults) { appInfo ->
-                        val packageName = appInfo.activityInfo.packageName
-                        val appName = appInfoCache[packageName]?.first
-                            ?: appInfo.loadLabel(packageManager).toString()
-                        val appIcon = appInfoCache[packageName]?.second
-                            ?: appInfo.loadIcon(packageManager).toBitmap().also {
-                                appInfoCache[packageName] = appName to it
-                            }
-
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable { onAppSelected(appInfo) }
-                                .padding(8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Image(
-                                bitmap = appIcon.asImageBitmap(),
-                                contentDescription = null,
-                                modifier = Modifier.size(40.dp)
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Column {
-                                Text(text = appName)
-                                Text(text = packageName)
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Close")
-            }
-        }
-    )
-}
-
-/**
- * Standard AlertDialog
- */
-@Composable
-fun StandardAlertDialog(
-    title: String,
-    text: String,
-    dismissText: String = "Cancel",
-    confirmText: String = "OK",
-    onDismiss: () -> Unit,
-    onConfirm: () -> Unit = onDismiss
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = {
-            Text(text = title)
-        },
-        text = {
-            Text(text = text)
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text(dismissText)
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = onConfirm) {
-                Text(confirmText)
-            }
-        }
-    )
-}
