@@ -7,6 +7,9 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -18,6 +21,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainUI(modifier: Modifier = Modifier, viewModel: ViewModel) {
     val context = LocalContext.current
@@ -31,6 +35,8 @@ fun MainUI(modifier: Modifier = Modifier, viewModel: ViewModel) {
     }
     val startOnBootSwitchStatus = remember { mutableStateOf(viewModel.getStartOnBoot(context)) }
     val showAppsDialog = remember { mutableStateOf(false) }
+    val AdvancedOptionssheetState = rememberModalBottomSheetState()
+    val showAdvancedOptionsBottomSheet = remember { mutableStateOf(false) }
 
     // TODO: Figure a better way to update the UI
     val isUsageStatsPermissionGranted by viewModel.isUsageStatsPermissionGranted.observeAsState(
@@ -45,6 +51,7 @@ fun MainUI(modifier: Modifier = Modifier, viewModel: ViewModel) {
     val notificationPermissionDialog = remember { mutableStateOf(false) }
     val appHasBeenChoosed by viewModel.appHasBeenChoosed.observeAsState(false)
     val appTargetName by viewModel.appTargetName.observeAsState("None")
+    val reLaunchTargetApp = remember { mutableStateOf(viewModel.getRelaunchTargetApp(context)) }
 
     val requestNotificationLauncher: ActivityResultLauncher<String> =
         rememberLauncherForActivityResult(
@@ -157,9 +164,33 @@ fun MainUI(modifier: Modifier = Modifier, viewModel: ViewModel) {
             ) {
                 showAppsDialog.value = true
             }
+
+            StandardButton(
+                stringResource(R.string.advanced_options),
+                ImageVector.vectorResource(id = R.drawable.build_24px)
+            ) {
+                showAdvancedOptionsBottomSheet.value = true
+            }
         }
 
         item {
+            if (showAdvancedOptionsBottomSheet.value) {
+                ModalBottomSheet(
+                    onDismissRequest = { showAdvancedOptionsBottomSheet.value = false },
+                    sheetState = AdvancedOptionssheetState
+                ) {
+                    StandardText(
+                        stringResource(R.string.advanced_options)
+                    )
+                    StandardSwitch(
+                        stringResource(R.string.relaunch_target_app_option),
+                        reLaunchTargetApp.value
+                    ) {
+                        reLaunchTargetApp.value = it
+                        viewModel.setRelaunchTargetApp(context, it)
+                    }
+                }
+            }
             /**
              * App list dialog
              */

@@ -17,4 +17,6 @@
     <string name="version_number">Version %1$s (%2$s)</string>
     <string name="select_an_app">Select an app</string>
     <string name="search_placeholder">Search</string>
+    <string name="advanced_options">Advanced options</string>
+    <string name="relaunch_target_app_option">Launch the target app again on exit</string>
 </resources>

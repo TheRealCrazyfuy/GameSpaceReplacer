@@ -31,7 +31,7 @@ class ViewModel : ViewModel() {
     private val _appTargetName = MutableLiveData<String>()
     val appTargetName: LiveData<String> get() = _appTargetName
 
-    fun getServiceData() : serviceData {
+    fun getServiceData(): serviceData {
         return serviceData
     }
 
@@ -51,7 +51,11 @@ class ViewModel : ViewModel() {
     }
 
     fun setApptarget(packageName: String, appName: String, context: Context) {
-        if (serviceData.appTargetPackage != packageName && checkifServiceisRunning(context, BackgroundService::class.java)) { // only restart the service if the app is different
+        if (serviceData.appTargetPackage != packageName && checkifServiceisRunning(
+                context,
+                BackgroundService::class.java
+            )
+        ) { // only restart the service if the app is different
             stopService(context)
             startService(context)
         }
@@ -62,6 +66,19 @@ class ViewModel : ViewModel() {
         // Save preferences
         savePreferences(context, "appTargetPackage", packageName)
         savePreferences(context, "appTargetName", appName)
+    }
+
+    fun setRelaunchTargetApp(context: Context, relaunchTargetApp: Boolean) {
+        serviceData.relaunchTargetApp = relaunchTargetApp
+        if (checkifServiceisRunning(context, BackgroundService::class.java)) {
+            stopService(context)
+            startService(context)
+        }
+        savePreferences(context, "option_relaunchTargetApp", relaunchTargetApp.toString())
+    }
+
+    fun getRelaunchTargetApp(context: Context): Boolean {
+        return getPreferences(context, "option_relaunchTargetApp")?.toBoolean() ?: false
     }
 
     fun setStartOnBoot(context: Context, startOnBoot: Boolean) {
@@ -179,15 +196,17 @@ class ViewModel : ViewModel() {
     }
 
     fun savePreferences(context: Context, key: String, value: String) {
-        val sharedPref = context.getSharedPreferences("com.abeja.gamecenterreplacer", Context.MODE_PRIVATE)
-        with (sharedPref.edit()) {
+        val sharedPref =
+            context.getSharedPreferences("com.abeja.gamecenterreplacer", Context.MODE_PRIVATE)
+        with(sharedPref.edit()) {
             putString(key, value)
             apply()
         }
     }
 
     fun getPreferences(context: Context, key: String): String? {
-        val sharedPref = context.getSharedPreferences("com.abeja.gamecenterreplacer", Context.MODE_PRIVATE)
+        val sharedPref =
+            context.getSharedPreferences("com.abeja.gamecenterreplacer", Context.MODE_PRIVATE)
         return sharedPref.getString(key, null)
     }
 

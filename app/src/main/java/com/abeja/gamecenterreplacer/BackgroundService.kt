@@ -17,6 +17,7 @@ import kotlinx.coroutines.*
 class BackgroundService : Service() {
     private var targetAppPackage = serviceData.appTargetPackage
     private var targetAppName = serviceData.appTargetName
+    private var relaunchTargetApp = serviceData.relaunchTargetApp
     private val triggerAppPackage = "cn.nubia.gamelauncher"
     private lateinit var gameSwitchObserver: GameSwitchObserver
     private val serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
@@ -25,6 +26,7 @@ class BackgroundService : Service() {
         val sharedPref = getSharedPreferences("com.abeja.gamecenterreplacer", Context.MODE_PRIVATE)
         val savedAppTargetPackage = sharedPref.getString("appTargetPackage", null)
         val savedAppTargetName = sharedPref.getString("appTargetName", null)
+        val savedRelaunchTargetApp = sharedPref.getString("option_relaunchTargetApp", null).toBoolean()
 
         if (targetAppPackage == null && savedAppTargetPackage != null) {
             targetAppPackage = savedAppTargetPackage
@@ -34,6 +36,11 @@ class BackgroundService : Service() {
         if (targetAppName == null && savedAppTargetName != null) {
             targetAppName = savedAppTargetName
             Log.d("BackgroundService", "Loaded appTargetName from SharedPreferences: $savedAppTargetName")
+        }
+
+        if (relaunchTargetApp == null) {
+            relaunchTargetApp = savedRelaunchTargetApp
+            Log.d("BackgroundService", "Loaded relaunchTargetApp config from SharedPreferences: $savedRelaunchTargetApp")
         }
 
         val channelId = "GameCenterReplacer"
@@ -66,27 +73,29 @@ class BackgroundService : Service() {
             }
         }
         gameSwitchObserver.register()
-        val usageStatsManager = getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
-        while (true) {
-            val endTime = System.currentTimeMillis()
-            val beginTime = endTime - 5000
-            val events = usageStatsManager.queryEvents(beginTime, endTime)
-            val event = UsageEvents.Event()
-            var currentForegroundApp: String? = null
+        if (relaunchTargetApp == true) {
+            val usageStatsManager = getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
+            while (true) {
+                val endTime = System.currentTimeMillis()
+                val beginTime = endTime - 5000
+                val events = usageStatsManager.queryEvents(beginTime, endTime)
+                val event = UsageEvents.Event()
+                var currentForegroundApp: String? = null
 
-            while (events.hasNextEvent()) {
-                events.getNextEvent(event)
-                if (event.eventType == UsageEvents.Event.MOVE_TO_FOREGROUND) {
-                    currentForegroundApp = event.packageName
+                while (events.hasNextEvent()) {
+                    events.getNextEvent(event)
+                    if (event.eventType == UsageEvents.Event.MOVE_TO_FOREGROUND) {
+                        currentForegroundApp = event.packageName
+                    }
                 }
-            }
 
-            if (currentForegroundApp == triggerAppPackage) {
-                Log.d("BackgroundService", "Trigger app is currently on screen")
-                startOrResumeTargetApp()
-            }
+                if (currentForegroundApp == triggerAppPackage) {
+                    Log.d("BackgroundService", "Trigger app is currently on screen")
+                    startOrResumeTargetApp()
+                }
 
-            delay(1000) // TODO: get rid of this delay while not tanking the battery life //
+                delay(1000) // TODO: get rid of this delay while not tanking the battery life //
+            }
         }
     }
 
