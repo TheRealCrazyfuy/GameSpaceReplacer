@@ -40,7 +40,7 @@ The app supports most REDMAGIC devices, it has been tested from the 7 series up 
 It should work on any modern REDMAGIC device. If you encounter any issues, please feel free to open an issue on GitHub. 
 
 > [!NOTE]  
-> Chinese firmware isn't officially supported due to it's heavy background killing.
+> Chinese firmware isn't officially supported due to its heavy background killing.
 
 > [!WARNING]  
 > Custom roms or GSIs aren't supported.
