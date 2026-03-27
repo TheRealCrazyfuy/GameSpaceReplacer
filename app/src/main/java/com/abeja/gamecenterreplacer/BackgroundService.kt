@@ -45,7 +45,7 @@ class BackgroundService : Service() {
 
         val channelId = "GameCenterReplacer"
         val channelName = "Background Service"
-        val notificationChannel = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_DEFAULT)
+        val notificationChannel = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_MIN)
         val notificationManager = getSystemService(NotificationManager::class.java)
         notificationManager.createNotificationChannel(notificationChannel)
 
@@ -54,6 +54,7 @@ class BackgroundService : Service() {
             //.setContentText("Long press this notification to hide.")
             .setSmallIcon(R.mipmap.ic_launcher)
             .setSilent(true)
+            .setPriority(NotificationCompat.PRIORITY_MIN)
             .build()
 
         startForeground(1, notification)
