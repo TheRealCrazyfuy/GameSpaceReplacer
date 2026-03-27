@@ -31,26 +31,27 @@ With this app, you can replace the default behavior of the red switch to launch 
 - Necessary permissions:
   - Usage Stats Permission > Check if the Game Space has been launched.
   - Display over other apps permission > Launch a different app on top of the Game Space.
+  - Notification access permission > Android requirement to keep the app running in the background.
 
 ## Tested Devices
 
-The app has been tested on the following devices:
+The app supports most REDMAGIC devices, it has been tested from the 7 series up to the 11 series, but other models might work too.
 
-- ✅ **REDMAGIC 7s Pro**
-- ✅ **REDMAGIC 8 Pro**
-- ✅ **REDMAGIC 10 Pro**
+It should work on any modern REDMAGIC device. If you encounter any issues, please feel free to open an issue on GitHub. 
 
-It should work on any modern REDMAGIC device. If you encounter any issues, please feel free to open an issue on GitHub. **Note that the Chinese firmware isn't officially supported.**
+> [!NOTE]  
+> Chinese firmware isn't officially supported due to it's heavy background killing.
 
+> [!WARNING]  
+> Custom roms or GSIs aren't supported.
 ## Common Issues
-- **REDMAGIC 10 Devices must have set the switch to launch the Game Space.**
-- The REDMAGIC Game Space briefly appears before the selected app launches.
+- **On Android 15 or newer you must have set the switch to launch the Game Space.**
 
 ## Installation
 - Go to the [Releases page](https://github.com/TheRealCrazyfuy/GameSpaceReplacer/releases) and download the latest release.
 - Once the download is finished open the `.apk` and install it.
 - Then just follow the instructions inside the app.
-- **On Android 15+ you have to manually give these permissions from settings. [Learn more](https://www.androidpolice.com/android-15-sideloading-restrictions-bad-users/)**
+- **On Android 15+ you have to manually allow restricted permissions by going to Settings -> Apps -> Find Game Space Replacer -> press on the top 3 dots and allow them there**
 
 ## Contributions
 All contributions are welcome, open a pull request and we'll look into it, thanks.
